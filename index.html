@@ -115,6 +115,27 @@ textarea::placeholder, .comment-input::placeholder, .name-input::placeholder, .m
 .add-member-row { display: flex; gap: 8px; margin-top: 12px; }
 .sync-badge { font-size: 11px; background: rgba(67,233,123,0.12); color: var(--accent3); border: 1px solid rgba(67,233,123,0.25); padding: 4px 10px; border-radius: 6px; }
 .sync-badge.syncing { background: rgba(108,99,255,0.12); color: var(--accent); border-color: rgba(108,99,255,0.25); }
+
+.skill-bar-wrap { margin-bottom: 14px; }
+.skill-bar-label { display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px; font-size: 13px; }
+.skill-bar-name { color: var(--text); font-weight: 500; }
+.skill-bar-score { font-family: 'Syne',sans-serif; font-weight: 700; font-size: 14px; }
+.skill-bar-track { height: 8px; background: var(--bg3); border-radius: 4px; overflow: hidden; }
+.skill-bar-fill { height: 100%; border-radius: 4px; transition: width 1s ease; }
+.member-selector-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.member-select-btn { padding: 10px 18px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg2); color: var(--text2); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: 'IBM Plex Sans JP',sans-serif; }
+.member-select-btn:hover { border-color: var(--accent); color: var(--accent); }
+.member-select-btn.selected { background: var(--accent); border-color: var(--accent); color: white; }
+.issue-list { list-style: none; padding: 0; }
+.issue-item { display: flex; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; line-height: 1.6; }
+.issue-item:last-child { border-bottom: none; }
+.issue-num { width: 22px; height: 22px; min-width: 22px; background: var(--accent2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: white; margin-top: 1px; }
+.growth-tag { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; font-size: 11px; font-weight: 600; background: rgba(108,99,255,0.12); color: var(--accent); border: 1px solid rgba(108,99,255,0.25); margin: 3px; }
+.stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px,1fr)); gap: 10px; margin-bottom: 18px; }
+.stat-box { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; }
+.stat-num { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 800; color: var(--text); }
+.stat-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: 1px; margin-top: 3px; }
+
 @media (max-width: 600px) {
   .header { padding: 12px 16px; }
   .main { padding: 16px; }
@@ -151,6 +172,7 @@ textarea::placeholder, .comment-input::placeholder, .name-input::placeholder, .m
         <div class="tab-bar">
           <button class="tab-btn active" onclick="switchTab('input')">＋ 新規分析</button>
           <button class="tab-btn" onclick="switchTab('list')">📋 振り返り一覧 <span id="count-badge"></span></button>
+          <button class="tab-btn" onclick="switchTab('skill')">📊 架電力分析</button>
           <button class="tab-btn" onclick="switchTab('settings')">⚙ 設定</button>
         </div>
         <span id="sync-badge" class="sync-badge">🔄 同期中...</span>
@@ -230,6 +252,29 @@ textarea::placeholder, .comment-input::placeholder, .name-input::placeholder, .m
           <input class="name-input" id="author-name" style="width:130px;padding:8px 12px;border-radius:8px;" placeholder="例：田中" oninput="saveName()">
         </div>
         <div id="reviews-container"></div>
+      </div>
+
+
+      <!-- SKILL TAB -->
+      <div id="tab-skill" style="display:none;">
+        <div class="panel">
+          <div class="panel-title">分析するメンバーを選択</div>
+          <div class="member-selector-grid" id="skill-member-btns"></div>
+          <button class="btn btn-primary" id="skill-analyze-btn" onclick="analyzeSkill()" style="width:100%;justify-content:center;">🤖 AIで架電力を分析する</button>
+        </div>
+        <div class="panel" id="skill-loading" style="display:none;">
+          <div class="loading-wrap">
+            <div class="spinner"></div>
+            <div style="color:var(--text2);font-size:14px;">過去の架電データをAIが分析しています...</div>
+            <div class="progress"><div class="progress-fill"></div></div>
+          </div>
+        </div>
+        <div id="skill-result" style="display:none;">
+          <div class="panel" id="skill-stats-panel"></div>
+          <div class="panel" id="skill-bars-panel"></div>
+          <div class="panel" id="skill-issues-panel"></div>
+          <div class="panel" id="skill-growth-panel"></div>
+        </div>
       </div>
 
       <!-- SETTINGS TAB -->
@@ -379,12 +424,13 @@ function resetApiKey() {
 // Tab
 // ============================================================
 function switchTab(tab) {
-  ['input','list','settings'].forEach((t, i) => {
+  ['input','list','skill','settings'].forEach((t, i) => {
     document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none';
     document.querySelectorAll('.tab-btn')[i].classList.toggle('active', t === tab);
   });
   if (tab === 'list') renderReviews();
   if (tab === 'settings') { renderMemberList(); }
+  if (tab === 'skill') { renderSkillMemberBtns(); }
 }
 window.switchTab = switchTab;
 
@@ -718,6 +764,205 @@ function showToast(msg, isError) {
   el.style.display = 'block';
   setTimeout(() => { el.style.display = 'none'; }, 3000);
 }
+
+
+// ============================================================
+// 架電力分析
+// ============================================================
+let selectedSkillMember = '';
+
+function renderSkillMemberBtns() {
+  const wrap = document.getElementById('skill-member-btns');
+  if (!wrap) return;
+  wrap.innerHTML = members.map(m => {
+    const count = reviews.filter(r => r.member === m).length;
+    return `<button class="member-select-btn ${selectedSkillMember===m?'selected':''}" onclick="selectSkillMember('${m}')">${m} <span style="font-size:11px;opacity:0.7;">(${count}件)</span></button>`;
+  }).join('');
+}
+window.renderSkillMemberBtns = renderSkillMemberBtns;
+
+function selectSkillMember(name) {
+  selectedSkillMember = selectedSkillMember === name ? '' : name;
+  renderSkillMemberBtns();
+}
+window.selectSkillMember = selectSkillMember;
+
+async function analyzeSkill() {
+  if (!selectedSkillMember) { showToast('❌ メンバーを選択してください', true); return; }
+  const memberReviews = reviews.filter(r => r.member === selectedSkillMember);
+  if (memberReviews.length === 0) { showToast('❌ このメンバーの架電記録がありません', true); return; }
+
+  document.getElementById('skill-loading').style.display = 'block';
+  document.getElementById('skill-result').style.display = 'none';
+  document.getElementById('skill-analyze-btn').disabled = true;
+
+  // 過去全件の振り返りデータを渡す
+  const allTeamData = reviews.slice(0, 30).map(r => ({
+    member: r.member,
+    result: r.appointment ? 'アポ取得' : (r.connected ? '通電NG' : '不通'),
+    ng_reason: r.ng_reason,
+    rebuttal: r.rebuttal,
+    good_points: (r.good_points||[]).join('／'),
+    improve_points: (r.improve_points||[]).join('／'),
+  }));
+
+  const targetData = memberReviews.map(r => ({
+    date: r.date,
+    company: r.company,
+    result: r.appointment ? 'アポ取得' : (r.connected ? '通電NG' : '不通'),
+    ng_reason: r.ng_reason,
+    rebuttal: r.rebuttal,
+    good_points: (r.good_points||[]).join('／'),
+    improve_points: (r.improve_points||[]).join('／'),
+    your_note: r.your_note,
+  }));
+
+  const connected = memberReviews.filter(r => r.connected).length;
+  const appointed = memberReviews.filter(r => r.appointment).length;
+  const total = memberReviews.length;
+
+  const prompt = `あなたはインサイドセールスのトップコーチです。
+以下のデータを元に「${selectedSkillMember}」の架電力を詳細に分析してください。
+
+【${selectedSkillMember}の架電データ（全${total}件）】
+通電率: ${total>0?Math.round(connected/total*100):0}% (${connected}/${total})
+アポ率: ${total>0?Math.round(appointed/total*100):0}% (${appointed}/${total})
+
+【詳細データ】
+${JSON.stringify(targetData, null, 2)}
+
+【チーム全体の傾向（参考）】
+${JSON.stringify(allTeamData, null, 2)}
+
+上記を分析し、必ず以下のJSON形式のみで返してください。前置きや説明は不要です。
+
+{
+  "overall_score": 全体スコア(0-100の整数),
+  "skills": {
+    "hearing": { "score": 0-100, "comment": "ヒアリング力の評価コメント（具体的に）" },
+    "urgency": { "score": 0-100, "comment": "緊急性の訴求力の評価コメント（具体的に）" },
+    "needs": { "score": 0-100, "comment": "ニーズ引き出し力の評価コメント（具体的に）" },
+    "problem": { "score": 0-100, "comment": "課題認識させる力の評価コメント（具体的に）" },
+    "rebuttal": { "score": 0-100, "comment": "切り返し力の評価コメント（具体的に）" },
+    "rapport": { "score": 0-100, "comment": "ラポール構築力（関係構築）の評価コメント（具体的に）" }
+  },
+  "top_issues": ["最重要課題1（具体的なアクション付き）", "重要課題2（具体的なアクション付き）", "課題3（具体的なアクション付き）"],
+  "strengths": ["強み1", "強み2"],
+  "growth_actions": ["今すぐできる改善アクション1", "改善アクション2", "改善アクション3"],
+  "coach_message": "コーチからの総評メッセージ（200字程度、励ましと具体的アドバイスを含む）"
+}`;
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 2000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const text = data.content.map(i => i.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(clean);
+    renderSkillResult(result, selectedSkillMember, total, connected, appointed);
+  } catch(e) {
+    showToast('❌ 分析エラー: ' + e.message, true);
+  }
+
+  document.getElementById('skill-loading').style.display = 'none';
+  document.getElementById('skill-analyze-btn').disabled = false;
+}
+window.analyzeSkill = analyzeSkill;
+
+function renderSkillResult(r, member, total, connected, appointed) {
+  const connRate = total > 0 ? Math.round(connected/total*100) : 0;
+  const appRate = total > 0 ? Math.round(appointed/total*100) : 0;
+  const scoreColor = r.overall_score >= 70 ? 'var(--accent3)' : r.overall_score >= 50 ? 'var(--accent)' : 'var(--accent2)';
+
+  // 統計
+  document.getElementById('skill-stats-panel').innerHTML = `
+    <div class="panel-title">${escHtml(member)} の架電力レポート</div>
+    <div style="display:flex;align-items:center;gap:20px;margin-bottom:18px;flex-wrap:wrap;">
+      <div style="text-align:center;">
+        <div style="font-family:'Syne',sans-serif;font-size:52px;font-weight:800;color:${scoreColor};line-height:1;">${r.overall_score}</div>
+        <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:1px;">総合スコア</div>
+      </div>
+      <div style="flex:1;min-width:200px;">
+        <div style="font-size:13px;color:var(--text);line-height:1.8;">${escHtml(r.coach_message)}</div>
+      </div>
+    </div>
+    <div class="stats-row">
+      <div class="stat-box"><div class="stat-num">${total}</div><div class="stat-label">総架電数</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--accent3);">${connRate}%</div><div class="stat-label">通電率</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--accent2);">${appRate}%</div><div class="stat-label">アポ率</div></div>
+      <div class="stat-box"><div class="stat-num" style="color:var(--accent);">${appointed}</div><div class="stat-label">アポ数</div></div>
+    </div>
+  `;
+
+  // スキルバー
+  const skillDefs = [
+    { key:'hearing', label:'🎧 ヒアリング力', color:'#6c63ff' },
+    { key:'urgency', label:'⚡ 緊急性の訴求力', color:'#ff6584' },
+    { key:'needs', label:'💡 ニーズ引き出し力', color:'#43e97b' },
+    { key:'problem', label:'🔍 課題認識させる力', color:'#f7971e' },
+    { key:'rebuttal', label:'💬 切り返し力', color:'#a18cd1' },
+    { key:'rapport', label:'🤝 ラポール構築力', color:'#38f9d7' },
+  ];
+  document.getElementById('skill-bars-panel').innerHTML = `
+    <div class="panel-title">能力別スコア</div>
+    ${skillDefs.map(s => {
+      const sk = r.skills[s.key] || { score: 0, comment: '' };
+      return `<div class="skill-bar-wrap">
+        <div class="skill-bar-label">
+          <span class="skill-bar-name">${s.label}</span>
+          <span class="skill-bar-score" style="color:${s.color};">${sk.score}</span>
+        </div>
+        <div class="skill-bar-track">
+          <div class="skill-bar-fill" style="width:${sk.score}%;background:linear-gradient(90deg,${s.color}88,${s.color});"></div>
+        </div>
+        <div style="font-size:12px;color:var(--text2);margin-top:5px;line-height:1.6;">${escHtml(sk.comment)}</div>
+      </div>`;
+    }).join('')}
+  `;
+
+  // 課題リスト
+  document.getElementById('skill-issues-panel').innerHTML = `
+    <div class="panel-title">🎯 重点改善課題</div>
+    <ul class="issue-list">
+      ${(r.top_issues||[]).map((issue,i) => `
+        <li class="issue-item">
+          <span class="issue-num">${i+1}</span>
+          <span>${escHtml(issue)}</span>
+        </li>`).join('')}
+    </ul>
+    <div style="margin-top:14px;">
+      <div style="font-size:12px;font-weight:700;color:var(--accent3);margin-bottom:8px;">✨ 強み</div>
+      ${(r.strengths||[]).map(s => `<span class="badge badge-green" style="margin:3px;">${escHtml(s)}</span>`).join('')}
+    </div>
+  `;
+
+  // 成長アクション
+  document.getElementById('skill-growth-panel').innerHTML = `
+    <div class="panel-title">🚀 今すぐできる改善アクション</div>
+    ${(r.growth_actions||[]).map((a,i) => `
+      <div style="display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:13px;line-height:1.6;">
+        <span style="width:22px;height:22px;min-width:22px;background:var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;margin-top:1px;">${i+1}</span>
+        <span>${escHtml(a)}</span>
+      </div>`).join('')}
+  `;
+
+  document.getElementById('skill-result').style.display = 'block';
+  document.getElementById('skill-result').scrollIntoView({ behavior: 'smooth' });
+}
+window.renderSkillResult = renderSkillResult;
 
 function escHtml(str) {
   if (!str) return '';
