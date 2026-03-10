@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CallReview - 架電振り返りツール</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=IBM+Plex+Sans+JP:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #0a0a0f; --bg2: #111118; --bg3: #1a1a24;
+  --border: #2a2a38; --accent: #6c63ff; --accent2: #ff6584;
+  --accent3: #43e97b; --text: #e8e8f0; --text2: #8888a8;
+  --text3: #55556a; --card: #13131e;
+}
+body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans JP', sans-serif; }
+.app {
+  min-height: 100vh;
+  background-image: radial-gradient(ellipse at 20% 0%, rgba(108,99,255,0.12) 0%, transparent 60%),
+                    radial-gradient(ellipse at 80% 100%, rgba(255,101,132,0.08) 0%, transparent 50%);
+}
+/* API KEY SCREEN */
+.apikey-screen {
+  min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px;
+}
+.apikey-card {
+  background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+  padding: 40px; max-width: 480px; width: 100%; text-align: center;
+}
+.apikey-logo { width: 56px; height: 56px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-family: 'Syne',sans-serif; font-weight: 800; font-size: 20px; color: white; margin: 0 auto 20px; }
+.apikey-title { font-family: 'Syne',sans-serif; font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+.apikey-sub { font-size: 13px; color: var(--text2); line-height: 1.7; margin-bottom: 24px; }
+.apikey-input {
+  width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px;
+  padding: 14px 16px; color: var(--text); font-family: monospace; font-size: 13px;
+  outline: none; margin-bottom: 12px; transition: border-color 0.2s;
+}
+.apikey-input:focus { border-color: var(--accent); }
+.apikey-hint { font-size: 11px; color: var(--text3); margin-bottom: 20px; line-height: 1.6; }
+.apikey-link { color: var(--accent); text-decoration: none; }
+.apikey-link:hover { text-decoration: underline; }
+/* HEADER */
+.header {
+  border-bottom: 1px solid var(--border); padding: 16px 28px;
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(10,10,15,0.9); backdrop-filter: blur(12px);
+  position: sticky; top: 0; z-index: 100; flex-wrap: wrap; gap: 10px;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.logo-mark { width: 34px; height: 34px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-family: 'Syne',sans-serif; font-weight: 800; font-size: 13px; color: white; }
+.logo-text { font-family: 'Syne',sans-serif; font-weight: 700; font-size: 17px; }
+.logo-sub { font-size: 11px; color: var(--text2); }
+.tab-bar { display: flex; gap: 4px; flex-wrap: wrap; }
+.tab-btn { padding: 7px 15px; border-radius: 8px; border: none; font-family: 'IBM Plex Sans JP',sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; font-weight: 500; }
+.tab-btn.active { background: var(--accent); color: white; }
+.tab-btn:not(.active) { background: transparent; color: var(--text2); }
+.tab-btn:not(.active):hover { background: var(--bg3); color: var(--text); }
+.api-badge { font-size: 11px; background: rgba(67,233,123,0.12); color: var(--accent3); border: 1px solid rgba(67,233,123,0.25); padding: 4px 10px; border-radius: 6px; cursor: pointer; }
+/* MAIN */
+.main { max-width: 1100px; margin: 0 auto; padding: 28px 24px; }
+.panel { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
+.panel-title { font-family: 'Syne',sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text2); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+.panel-title::before { content: ''; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; }
+textarea, .gas-input, .comment-input, .name-input {
+  width: 100%; background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 10px; padding: 14px; color: var(--text);
+  font-family: 'IBM Plex Sans JP',sans-serif; font-size: 13px;
+  line-height: 1.7; outline: none; transition: border-color 0.2s;
+}
+textarea { resize: vertical; min-height: 160px; }
+textarea:focus, .gas-input:focus, .comment-input:focus, .name-input:focus { border-color: var(--accent); }
+textarea::placeholder, .gas-input::placeholder, .comment-input::placeholder, .name-input::placeholder { color: var(--text3); }
+.gas-input { font-family: monospace; font-size: 12px; }
+.btn { padding: 11px 22px; border-radius: 10px; border: none; font-family: 'IBM Plex Sans JP',sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
+.btn-primary { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: white; box-shadow: 0 4px 20px rgba(108,99,255,0.3); }
+.btn-primary:hover { transform: translateY(-1px); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.btn-secondary { background: var(--bg3); color: var(--text); border: 1px solid var(--border); }
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+.btn-success { background: linear-gradient(135deg, #059669, var(--accent3)); color: white; }
+.btn-danger { background: rgba(255,101,132,0.15); color: var(--accent2); border: 1px solid rgba(255,101,132,0.3); }
+.btn-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
+.result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 16px; }
+.result-field { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
+.result-field.full { grid-column: 1 / -1; }
+.result-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 7px; }
+.result-value { font-size: 14px; color: var(--text); line-height: 1.6; }
+.badge { display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+.badge-green { background: rgba(67,233,123,0.12); color: var(--accent3); border: 1px solid rgba(67,233,123,0.25); }
+.badge-red { background: rgba(255,101,132,0.15); color: var(--accent2); border: 1px solid rgba(255,101,132,0.3); }
+.badge-gray { background: rgba(136,136,168,0.12); color: var(--text2); border: 1px solid var(--border); }
+.ai-box { background: linear-gradient(135deg, rgba(108,99,255,0.08), rgba(139,92,246,0.05)); border: 1px solid rgba(108,99,255,0.25); border-radius: 12px; padding: 18px; margin-bottom: 14px; position: relative; }
+.ai-box::after { content: 'AI'; position: absolute; top: 12px; right: 14px; font-family: 'Syne',sans-serif; font-size: 10px; font-weight: 800; color: var(--accent); opacity: 0.4; letter-spacing: 2px; }
+.ai-box-title { font-size: 12px; font-weight: 600; color: var(--accent); margin-bottom: 8px; }
+.ai-box-text { font-size: 13px; line-height: 1.75; color: var(--text); }
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+.loading-wrap { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 48px 0; }
+.spinner { width: 40px; height: 40px; border: 3px solid var(--bg3); border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.progress { width: 200px; height: 3px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); animation: prog 2s ease-in-out infinite; }
+@keyframes prog { 0%{width:5%} 50%{width:75%} 100%{width:95%} }
+.review-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 14px; transition: border-color 0.2s; }
+.review-card:hover { border-color: var(--accent); }
+.review-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
+.review-company { font-family: 'Syne',sans-serif; font-size: 17px; font-weight: 700; }
+.review-meta { font-size: 11px; color: var(--text3); margin-top: 3px; }
+.review-body { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 14px; }
+.mini-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 3px; }
+.mini-value { font-size: 13px; color: var(--text); line-height: 1.5; }
+.ng-text { color: #ff8fa3; }
+.comments-section { border-top: 1px solid var(--border); padding-top: 14px; margin-top: 14px; }
+.comments-title { font-size: 12px; color: var(--text2); font-weight: 600; margin-bottom: 10px; }
+.comment-item { background: var(--bg2); border-radius: 8px; padding: 10px 14px; margin-bottom: 8px; font-size: 13px; line-height: 1.6; }
+.comment-author { font-weight: 600; color: var(--accent); font-size: 11px; margin-bottom: 3px; }
+.comment-row { display: flex; gap: 8px; margin-top: 8px; }
+.comment-input { flex: 1; min-height: unset; padding: 9px 12px; border-radius: 8px; }
+.btn-sm { padding: 9px 16px; font-size: 12px; border-radius: 8px; border: none; cursor: pointer; font-family: 'IBM Plex Sans JP',sans-serif; font-weight: 600; background: var(--accent); color: white; white-space: nowrap; }
+.btn-sm:hover { opacity: 0.85; }
+.empty { text-align: center; padding: 80px 32px; color: var(--text3); }
+.empty-icon { font-size: 48px; margin-bottom: 14px; }
+.empty-text { font-size: 15px; line-height: 1.8; }
+.toast { position: fixed; bottom: 28px; right: 28px; background: var(--accent3); color: #0a1a0a; padding: 12px 22px; border-radius: 10px; font-weight: 600; font-size: 14px; z-index: 999; animation: slideUp 0.3s ease; pointer-events: none; }
+@keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.note-box { margin-top: 10px; padding: 12px 14px; background: var(--bg2); border-radius: 8px; font-size: 13px; color: var(--text2); line-height: 1.6; }
+.note-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 4px; }
+.code-block { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 18px; font-family: monospace; font-size: 12px; color: #a8d8a8; line-height: 1.8; margin-bottom: 18px; white-space: pre; overflow-x: auto; }
+.hint { font-size: 12px; color: var(--text3); margin-top: 8px; line-height: 1.7; }
+.col-info { font-size: 12px; color: var(--text2); line-height: 2; }
+.section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
+.section-title { font-family: 'Syne',sans-serif; font-size: 20px; font-weight: 700; }
+.name-row { display: flex; align-items: center; gap: 8px; }
+.name-label { font-size: 12px; color: var(--text2); white-space: nowrap; }
+.name-input { width: 130px; padding: 8px 12px; border-radius: 8px; }
+@media (max-width: 600px) {
+  .header { padding: 12px 16px; }
+  .main { padding: 16px; }
+  .result-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+
+  <!-- ===== APIキー入力画面 ===== -->
+  <div id="apikey-screen" class="apikey-screen">
+    <div class="apikey-card">
+      <div class="apikey-logo">IS</div>
+      <div class="apikey-title">CallReview</div>
+      <div class="apikey-sub">
+        架電振り返りツールを使うには<br>
+        Anthropic APIキーが必要です。<br>
+        入力内容はあなたのブラウザにのみ保存されます。
+      </div>
+      <input class="apikey-input" id="apikey-input" type="password" placeholder="sk-ant-api03-..." />
+      <div class="apikey-hint">
+        APIキーは <a class="apikey-link" href="https://console.anthropic.com" target="_blank">console.anthropic.com</a> で取得できます。<br>
+        ※ 1回入力するとブラウザに保存され、次回から不要です。
+      </div>
+      <button class="btn btn-primary" style="width:100%;justify-content:center;" onclick="saveApiKey()">
+        🚀 ツールを起動する
+      </button>
+    </div>
+  </div>
+
+  <!-- ===== メインアプリ ===== -->
+  <div id="main-app" style="display:none;">
+    <header class="header">
+      <div class="header-left">
+        <div class="logo-mark">IS</div>
+        <div>
+          <div class="logo-text">CallReview</div>
+          <div class="logo-sub">架電振り返りツール</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+        <div class="tab-bar">
+          <button class="tab-btn active" onclick="switchTab('input')">＋ 新規分析</button>
+          <button class="tab-btn" onclick="switchTab('list')">📋 振り返り一覧 <span id="count-badge"></span></button>
+          <button class="tab-btn" onclick="switchTab('settings')">⚙ 設定</button>
+        </div>
+        <span class="api-badge" onclick="resetApiKey()" title="クリックでAPIキーをリセット">🔑 API接続中</span>
+      </div>
+    </header>
+
+    <main class="main">
+
+      <!-- INPUT TAB -->
+      <div id="tab-input">
+        <div class="panel">
+          <div class="panel-title">文字起こしを貼り付け</div>
+          <textarea id="transcript" placeholder="inside-sales-toolsの文字起こしをここにコピペしてください...
+
+例）
+営業：お電話ありがとうございます。○○株式会社の△△と申します...
+相手：はい、どのようなご用件でしょうか...
+
+トーク全文をそのまま貼り付けてOKです"></textarea>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="analyze-btn" onclick="analyze()">🤖 AIで自動分析</button>
+            <button class="btn btn-secondary" onclick="clearTranscript()">クリア</button>
+          </div>
+        </div>
+
+        <div class="panel" id="loading-panel" style="display:none;">
+          <div class="loading-wrap">
+            <div class="spinner"></div>
+            <div style="color:var(--text2);font-size:14px;">AIが文字起こしを解析しています...</div>
+            <div class="progress"><div class="progress-fill"></div></div>
+          </div>
+        </div>
+
+        <div class="panel" id="result-panel" style="display:none;">
+          <div class="panel-title">分析結果</div>
+          <div id="badges" style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;"></div>
+          <div class="result-grid" id="result-grid"></div>
+          <div class="ai-box">
+            <div class="ai-box-title">✨ AIが提案するより良い切り返し</div>
+            <div class="ai-box-text" id="better-rebuttal"></div>
+          </div>
+          <div class="divider"></div>
+          <div style="font-size:12px;color:var(--text2);margin-bottom:8px;">💬 自分の振り返りメモ（任意）</div>
+          <textarea id="your-note" style="min-height:80px;" placeholder="自分なりの気づき・改善点をメモしておこう..."></textarea>
+          <div class="btn-row">
+            <button class="btn btn-success" onclick="saveRecord()">💾 保存してチームと共有</button>
+            <span id="sheets-hint" style="font-size:12px;color:var(--accent3);display:none;">+ Googleスプレッドシートにも書き込み</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- LIST TAB -->
+      <div id="tab-list" style="display:none;">
+        <div class="section-header">
+          <div class="section-title">架電振り返り一覧</div>
+          <div class="name-row">
+            <span class="name-label">自分の名前：</span>
+            <input class="name-input" id="author-name" placeholder="例：田中" oninput="saveName()">
+          </div>
+        </div>
+        <div id="reviews-container"></div>
+      </div>
+
+      <!-- SETTINGS TAB -->
+      <div id="tab-settings" style="display:none;">
+        <div class="panel">
+          <div class="panel-title">Googleスプレッドシート連携</div>
+          <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:16px;">
+            Google Apps Script（GAS）をスプレッドシートに設定することで、架電記録を自動書き込みできます。
+          </p>
+          <div class="code-block">function doGet(e) {
+  try {
+    var params = e.parameter;
+    if (params && params.row) {
+      var row = JSON.parse(decodeURIComponent(params.row));
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+      sheet.appendRow(row);
+      return ContentService.createTextOutput(JSON.stringify({status:"ok"}))
+        .setMimeType(ContentService.MimeType.JSON);
+    }
+    return ContentService.createTextOutput(JSON.stringify({status:"ok",message:"GAS is running"}))
+      .setMimeType(ContentService.MimeType.JSON);
+  } catch(err) {
+    return ContentService.createTextOutput(JSON.stringify({status:"error",message:err.toString()}))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
+function doPost(e) { return doGet(e); }</div>
+          <div style="font-size:13px;color:var(--text2);margin-bottom:6px;">GAS WebApp URL（/exec で終わるURL）</div>
+          <input class="gas-input" id="gas-url" placeholder="https://script.google.com/macros/s/..." oninput="saveGasUrl()">
+          <div class="hint">※ URLを入力するだけで連携完了。保存ボタン押下時に自動送信されます。</div>
+          <div class="divider"></div>
+          <div class="panel-title">スプレッドシートの列構成</div>
+          <div class="col-info">
+            A: 日時　B: 企業名　C: 担当者名　D: 事業内容　E: 通電　F: アポ<br>
+            G: NG理由　H: 実際の切り返し　I: 架電結果　J: AI推奨切り返し　K: 自分のメモ
+          </div>
+          <div class="divider"></div>
+          <div class="panel-title">データ管理</div>
+          <button class="btn btn-danger" onclick="clearAll()">🗑 全データを削除</button>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<div class="toast" id="toast" style="display:none;"></div>
+
+<script>
+let currentResult = null;
+let reviews = [];
+let comments = {};
+let gasUrl = '';
+let authorName = '';
+let apiKey = '';
+
+// ============================================================
+// Init
+// ============================================================
+window.addEventListener('DOMContentLoaded', () => {
+  apiKey = localStorage.getItem('anthropic-api-key') || '';
+  if (apiKey) {
+    showApp();
+  }
+  reviews = JSON.parse(localStorage.getItem('call-reviews') || '[]');
+  comments = JSON.parse(localStorage.getItem('call-comments') || '{}');
+  gasUrl = localStorage.getItem('gas-url') || '';
+  authorName = localStorage.getItem('author-name') || '';
+  if (document.getElementById('gas-url')) document.getElementById('gas-url').value = gasUrl;
+  if (document.getElementById('author-name')) document.getElementById('author-name').value = authorName;
+  updateCountBadge();
+  if (gasUrl) document.getElementById('sheets-hint').style.display = 'inline';
+});
+
+function saveApiKey() {
+  const key = document.getElementById('apikey-input').value.trim();
+  if (!key || !key.startsWith('sk-')) {
+    showToast('❌ 正しいAPIキーを入力してください（sk-ant-...）');
+    return;
+  }
+  apiKey = key;
+  localStorage.setItem('anthropic-api-key', key);
+  showApp();
+}
+
+function showApp() {
+  document.getElementById('apikey-screen').style.display = 'none';
+  document.getElementById('main-app').style.display = 'block';
+}
+
+function resetApiKey() {
+  if (!confirm('APIキーをリセットしますか？')) return;
+  localStorage.removeItem('anthropic-api-key');
+  apiKey = '';
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('apikey-screen').style.display = 'flex';
+  document.getElementById('apikey-input').value = '';
+}
+
+// ============================================================
+// Tab
+// ============================================================
+function switchTab(tab) {
+  ['input','list','settings'].forEach((t, i) => {
+    document.getElementById('tab-' + t).style.display = t === tab ? 'block' : 'none';
+    document.querySelectorAll('.tab-btn')[i].classList.toggle('active', t === tab);
+  });
+  if (tab === 'list') renderReviews();
+}
+
+// ============================================================
+// AI 分析
+// ============================================================
+async function analyze() {
+  const transcript = document.getElementById('transcript').value.trim();
+  if (!transcript) return;
+  document.getElementById('analyze-btn').disabled = true;
+  document.getElementById('loading-panel').style.display = 'block';
+  document.getElementById('result-panel').style.display = 'none';
+
+  try {
+    const prompt = `あなたはインサイドセールスの架電記録を分析する専門家です。
+以下の架電の文字起こしから情報を抽出し、必ず以下のJSON形式のみで返してください。前置きや説明は不要です。
+
+文字起こし:
+${transcript}
+
+返すJSONフォーマット:
+{
+  "company": "企業名（不明な場合は「不明」）",
+  "contact": "担当者名（不明な場合は「不明」）",
+  "business": "相手の事業内容（簡潔に1〜2文）",
+  "connected": true or false（通電あり=true）,
+  "appointment": true or false（アポ取得=true。口頭で日程調整まで完了した場合のみtrue。メール送付のみ・資料送付のみはfalse）,
+  "ng_reason": "断られた理由・NG理由（通電なし・アポ取得の場合は「なし」）",
+  "rebuttal": "実際の切り返しトーク内容（あれば）",
+  "result": "架電結果のサマリー（1文）",
+  "better_rebuttal": "より効果的な切り返し案（具体的なトークスクリプト形式で）"
+}`;
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-opus-4-5',
+        max_tokens: 1000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const text = data.content.map(i => i.text || '').join('');
+    const clean = text.replace(/```json|```/g, '').trim();
+    currentResult = JSON.parse(clean);
+    renderResult(currentResult);
+  } catch(e) {
+    showToast('❌ 分析エラー: ' + e.message);
+  }
+
+  document.getElementById('loading-panel').style.display = 'none';
+  document.getElementById('analyze-btn').disabled = false;
+}
+
+function renderResult(r) {
+  document.getElementById('badges').innerHTML = `
+    <span class="badge ${r.connected ? 'badge-green' : 'badge-gray'}">${r.connected ? '✓ 通電あり' : '✕ 通電なし'}</span>
+    <span class="badge ${r.appointment ? 'badge-green' : 'badge-red'}">${r.appointment ? '🎯 アポ取得' : '✕ アポなし'}</span>
+  `;
+  document.getElementById('result-grid').innerHTML = `
+    <div class="result-field"><div class="result-label">企業名</div><div class="result-value" style="font-size:16px;font-weight:600;">${escHtml(r.company)}</div></div>
+    <div class="result-field"><div class="result-label">担当者名</div><div class="result-value">${escHtml(r.contact)}</div></div>
+    <div class="result-field full"><div class="result-label">事業内容</div><div class="result-value">${escHtml(r.business)}</div></div>
+    <div class="result-field"><div class="result-label">NG理由</div><div class="result-value ng-text">${escHtml(r.ng_reason)}</div></div>
+    <div class="result-field"><div class="result-label">実際の切り返し</div><div class="result-value">${escHtml(r.rebuttal || '（記録なし）')}</div></div>
+    <div class="result-field full"><div class="result-label">架電結果</div><div class="result-value">${escHtml(r.result)}</div></div>
+  `;
+  document.getElementById('better-rebuttal').textContent = r.better_rebuttal;
+  document.getElementById('result-panel').style.display = 'block';
+  if (gasUrl) document.getElementById('sheets-hint').style.display = 'inline';
+}
+
+// ============================================================
+// 保存
+// ============================================================
+async function saveRecord() {
+  if (!currentResult) return;
+  const record = {
+    ...currentResult,
+    your_note: document.getElementById('your-note').value,
+    id: Date.now(),
+    date: new Date().toLocaleString('ja-JP')
+  };
+  reviews.unshift(record);
+  localStorage.setItem('call-reviews', JSON.stringify(reviews));
+  updateCountBadge();
+
+  if (gasUrl) {
+    try {
+      await sendToSheets(record);
+      showToast('✅ 保存 & スプシ送信完了！');
+    } catch {
+      showToast('✅ 保存完了（スプシ送信失敗）');
+    }
+  } else {
+    showToast('✅ 保存しました');
+  }
+
+  document.getElementById('transcript').value = '';
+  document.getElementById('your-note').value = '';
+  document.getElementById('result-panel').style.display = 'none';
+  currentResult = null;
+  switchTab('list');
+}
+
+async function sendToSheets(record) {
+  const row = [
+    record.date, record.company, record.contact, record.business,
+    record.connected ? '○' : '×', record.appointment ? '○' : '×',
+    record.ng_reason, record.rebuttal, record.result,
+    record.better_rebuttal, record.your_note || ''
+  ];
+  const url = gasUrl + '?row=' + encodeURIComponent(JSON.stringify(row));
+  await fetch(url);
+}
+
+// ============================================================
+// レビュー一覧
+// ============================================================
+function renderReviews() {
+  const container = document.getElementById('reviews-container');
+  if (reviews.length === 0) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📞</div><div class="empty-text">まだ架電記録がありません。<br>「新規分析」タブから文字起こしを貼り付けてください。</div></div>`;
+    return;
+  }
+  container.innerHTML = reviews.map(r => {
+    const cmts = comments[r.id] || [];
+    const cmtHtml = cmts.map(c => `
+      <div class="comment-item">
+        <div class="comment-author">${escHtml(c.author)} · ${c.time}</div>
+        ${escHtml(c.text)}
+      </div>`).join('');
+    return `
+    <div class="review-card">
+      <div class="review-header">
+        <div>
+          <div class="review-company">${escHtml(r.company)}</div>
+          <div class="review-meta">${r.date} · ${escHtml(r.contact)}</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="badge ${r.connected ? 'badge-green' : 'badge-gray'}">${r.connected ? '通電○' : '通電×'}</span>
+          <span class="badge ${r.appointment ? 'badge-green' : 'badge-red'}">${r.appointment ? 'アポ○' : 'アポ×'}</span>
+        </div>
+      </div>
+      <div class="review-body">
+        <div><div class="mini-label">事業内容</div><div class="mini-value">${escHtml(r.business)}</div></div>
+        <div><div class="mini-label">NG理由</div><div class="mini-value ng-text">${escHtml(r.ng_reason)}</div></div>
+        <div><div class="mini-label">実際の切り返し</div><div class="mini-value">${escHtml(r.rebuttal || '—')}</div></div>
+        <div><div class="mini-label">架電結果</div><div class="mini-value">${escHtml(r.result)}</div></div>
+      </div>
+      <div class="ai-box">
+        <div class="ai-box-title">✨ AI推奨切り返し</div>
+        <div class="ai-box-text" style="font-size:13px;">${escHtml(r.better_rebuttal)}</div>
+      </div>
+      ${r.your_note ? `<div class="note-box"><div class="note-label">自分のメモ</div>${escHtml(r.your_note)}</div>` : ''}
+      <div class="comments-section">
+        <div class="comments-title">💬 チームコメント (${cmts.length})</div>
+        ${cmtHtml}
+        <div class="comment-row">
+          <input class="comment-input" id="ci-${r.id}" placeholder="意見・アドバイスを追加..." onkeydown="if(event.key==='Enter')addComment(${r.id})">
+          <button class="btn-sm" onclick="addComment(${r.id})">送信</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function addComment(reviewId) {
+  const input = document.getElementById('ci-' + reviewId);
+  const text = input.value.trim();
+  const author = authorName || '匿名';
+  if (!text) return;
+  if (!comments[reviewId]) comments[reviewId] = [];
+  comments[reviewId].push({ author, text, time: new Date().toLocaleString('ja-JP') });
+  localStorage.setItem('call-comments', JSON.stringify(comments));
+  input.value = '';
+  renderReviews();
+}
+
+function clearTranscript() {
+  document.getElementById('transcript').value = '';
+  document.getElementById('result-panel').style.display = 'none';
+  currentResult = null;
+}
+function saveGasUrl() {
+  gasUrl = document.getElementById('gas-url').value;
+  localStorage.setItem('gas-url', gasUrl);
+  if (gasUrl) document.getElementById('sheets-hint').style.display = 'inline';
+}
+function saveName() {
+  authorName = document.getElementById('author-name').value;
+  localStorage.setItem('author-name', authorName);
+}
+function updateCountBadge() {
+  const el = document.getElementById('count-badge');
+  if (el) el.textContent = reviews.length > 0 ? `(${reviews.length})` : '';
+}
+function clearAll() {
+  if (!confirm('全データを削除しますか？')) return;
+  reviews = []; comments = {};
+  localStorage.removeItem('call-reviews');
+  localStorage.removeItem('call-comments');
+  updateCountBadge();
+  showToast('🗑 データを削除しました');
+}
+function showToast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 3000);
+}
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>
