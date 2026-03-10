@@ -278,8 +278,12 @@ const db = getDatabase(app);
 // グローバルに公開
 window._firebase = { db, ref, push, onValue, set, remove };
 
-// Firebase接続後に初期化
-window.initApp();
+// initAppが定義済みなら即呼び出し、未定義なら定義後に呼ばれるようフラグを立てる
+if (typeof window.initApp === 'function') {
+  window.initApp();
+} else {
+  window._firebaseReady = true;
+}
 </script>
 
 <script>
@@ -299,6 +303,7 @@ let firebaseReady = false;
 // ============================================================
 window.initApp = function() {
   firebaseReady = true;
+  if (!window._firebase) { console.error('Firebase未初期化'); return; }
   apiKey = localStorage.getItem('anthropic-api-key') || '';
   authorName = localStorage.getItem('author-name') || '';
   members = JSON.parse(localStorage.getItem('call-members') || JSON.stringify(DEFAULT_MEMBERS));
@@ -450,9 +455,20 @@ async function analyze() {
   document.getElementById('loading-panel').style.display = 'block';
   document.getElementById('result-panel').style.display = 'none';
 
+  // 過去の振り返りから学習データ生成（最新20件）
+  const learningData = reviews.slice(0, 20).filter(r => r.rebuttal || r.better_rebuttal);
+  const learningText = learningData.length > 0
+    ? '\n\n【このチームの過去架電データ（学習用）】\n' + learningData.map((d,i) =>
+        '事例'+(i+1)+': 結果='+(d.appointment?'アポ取得':d.connected?'通電NG':'不通')+
+        ', NG理由='+(d.ng_reason||'なし')+
+        ', 実際の切り返し='+(d.rebuttal||'なし')+
+        ', 効果的な切り返し='+(d.better_rebuttal||'なし')
+      ).join('\n') + '\n\n上記の過去事例のパターンを参考に、このチーム特有の課題に合った切り返しを提案してください。'
+    : '';
+
   try {
     const prompt = `あなたはインサイドセールスの架電記録を分析する専門家です。
-以下の架電の文字起こしから情報を抽出し、必ず以下のJSON形式のみで返してください。前置きや説明は不要です。
+以下の架電の文字起こしから情報を抽出し、必ず以下のJSON形式のみで返してください。前置きや説明は不要です。` + learningText + `
 
 文字起こし:
 ${transcript}
@@ -683,6 +699,9 @@ async function clearAll() {
 window.clearAll = clearAll;
 
 function resetApiKey() {
+  const pin = prompt('管理者用の暗証番号を入力してください：');
+  if (pin === null) return;
+  if (pin !== 'Ndyk0821') { showToast('❌ 暗証番号が違います', true); return; }
   if (!confirm('APIキーをリセットしますか？')) return;
   localStorage.removeItem('anthropic-api-key');
   apiKey = '';
@@ -703,6 +722,11 @@ function showToast(msg, isError) {
 function escHtml(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Firebaseが先に読み込まれていた場合はここで初期化実行
+if (window._firebaseReady) {
+  window.initApp();
 }
 </script>
 </body>
