@@ -14,11 +14,7 @@
   --text3: #55556a; --card: #13131e;
 }
 body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans JP', sans-serif; }
-.app {
-  min-height: 100vh;
-  background-image: radial-gradient(ellipse at 20% 0%, rgba(108,99,255,0.12) 0%, transparent 60%),
-                    radial-gradient(ellipse at 80% 100%, rgba(255,101,132,0.08) 0%, transparent 50%);
-}
+.app { min-height: 100vh; background-image: radial-gradient(ellipse at 20% 0%, rgba(108,99,255,0.12) 0%, transparent 60%), radial-gradient(ellipse at 80% 100%, rgba(255,101,132,0.08) 0%, transparent 50%); }
 .apikey-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 24px; }
 .apikey-card { background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 40px; max-width: 480px; width: 100%; text-align: center; }
 .apikey-logo { width: 56px; height: 56px; background: linear-gradient(135deg, var(--accent), var(--accent2)); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-family: 'Syne',sans-serif; font-weight: 800; font-size: 20px; color: white; margin: 0 auto 20px; }
@@ -43,16 +39,10 @@ body { background: var(--bg); color: var(--text); font-family: 'IBM Plex Sans JP
 .panel { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; margin-bottom: 20px; }
 .panel-title { font-family: 'Syne',sans-serif; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; color: var(--text2); margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
 .panel-title::before { content: ''; width: 3px; height: 14px; background: var(--accent); border-radius: 2px; }
-textarea, .gas-input, .comment-input, .name-input, .member-input {
-  width: 100%; background: var(--bg2); border: 1px solid var(--border);
-  border-radius: 10px; padding: 14px; color: var(--text);
-  font-family: 'IBM Plex Sans JP',sans-serif; font-size: 13px;
-  line-height: 1.7; outline: none; transition: border-color 0.2s;
-}
+textarea, .gas-input, .comment-input, .name-input, .member-input { width: 100%; background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 14px; color: var(--text); font-family: 'IBM Plex Sans JP',sans-serif; font-size: 13px; line-height: 1.7; outline: none; transition: border-color 0.2s; }
 textarea { resize: vertical; min-height: 160px; }
 textarea:focus, .gas-input:focus, .comment-input:focus, .name-input:focus, .member-input:focus { border-color: var(--accent); }
-textarea::placeholder, .gas-input::placeholder, .comment-input::placeholder, .name-input::placeholder, .member-input::placeholder { color: var(--text3); }
-.gas-input { font-family: monospace; font-size: 12px; }
+textarea::placeholder, .comment-input::placeholder, .name-input::placeholder, .member-input::placeholder { color: var(--text3); }
 .btn { padding: 11px 22px; border-radius: 10px; border: none; font-family: 'IBM Plex Sans JP',sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
 .btn-primary { background: linear-gradient(135deg, var(--accent), #8b5cf6); color: white; box-shadow: 0 4px 20px rgba(108,99,255,0.3); }
 .btn-primary:hover { transform: translateY(-1px); }
@@ -62,19 +52,10 @@ textarea::placeholder, .gas-input::placeholder, .comment-input::placeholder, .na
 .btn-success { background: linear-gradient(135deg, #059669, var(--accent3)); color: white; }
 .btn-danger { background: rgba(255,101,132,0.15); color: var(--accent2); border: 1px solid rgba(255,101,132,0.3); }
 .btn-row { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; align-items: center; }
-
-/* メンバー選択 */
-.member-select-wrap { margin-bottom: 16px; }
-.member-select-label { font-size: 12px; color: var(--text2); margin-bottom: 8px; font-weight: 600; }
 .member-grid { display: flex; flex-wrap: wrap; gap: 8px; }
-.member-chip {
-  padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border);
-  background: var(--bg2); color: var(--text2); font-size: 13px; font-weight: 500;
-  cursor: pointer; transition: all 0.2s; font-family: 'IBM Plex Sans JP',sans-serif;
-}
+.member-chip { padding: 8px 16px; border-radius: 20px; border: 1px solid var(--border); background: var(--bg2); color: var(--text2); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; font-family: 'IBM Plex Sans JP',sans-serif; }
 .member-chip:hover { border-color: var(--accent); color: var(--accent); }
 .member-chip.selected { background: var(--accent); border-color: var(--accent); color: white; }
-
 .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px; margin-bottom: 16px; }
 .result-field { background: var(--bg2); border: 1px solid var(--border); border-radius: 12px; padding: 14px; }
 .result-field.full { grid-column: 1 / -1; }
@@ -96,14 +77,11 @@ textarea::placeholder, .gas-input::placeholder, .comment-input::placeholder, .na
 .progress { width: 200px; height: 3px; background: var(--bg3); border-radius: 2px; overflow: hidden; }
 .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); animation: prog 2s ease-in-out infinite; }
 @keyframes prog { 0%{width:5%} 50%{width:75%} 100%{width:95%} }
-
-/* フィルター */
 .filter-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; align-items: center; }
 .filter-label { font-size: 12px; color: var(--text2); }
 .filter-chip { padding: 6px 14px; border-radius: 16px; border: 1px solid var(--border); background: var(--bg2); color: var(--text2); font-size: 12px; cursor: pointer; transition: all 0.2s; font-family: 'IBM Plex Sans JP',sans-serif; }
 .filter-chip:hover { border-color: var(--accent); color: var(--accent); }
 .filter-chip.active { background: var(--accent); border-color: var(--accent); color: white; }
-
 .review-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-bottom: 14px; transition: border-color 0.2s; }
 .review-card:hover { border-color: var(--accent); }
 .review-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; flex-wrap: wrap; gap: 8px; }
@@ -125,19 +103,18 @@ textarea::placeholder, .gas-input::placeholder, .comment-input::placeholder, .na
 .empty-icon { font-size: 48px; margin-bottom: 14px; }
 .empty-text { font-size: 15px; line-height: 1.8; }
 .toast { position: fixed; bottom: 28px; right: 28px; background: var(--accent3); color: #0a1a0a; padding: 12px 22px; border-radius: 10px; font-weight: 600; font-size: 14px; z-index: 999; animation: slideUp 0.3s ease; pointer-events: none; }
+.toast-error { background: var(--accent2) !important; color: white !important; }
 @keyframes slideUp { from { transform: translateY(16px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 .note-box { margin-top: 10px; padding: 12px 14px; background: var(--bg2); border-radius: 8px; font-size: 13px; color: var(--text2); line-height: 1.6; }
 .note-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1px; color: var(--text3); margin-bottom: 4px; }
-.code-block { background: var(--bg); border: 1px solid var(--border); border-radius: 10px; padding: 18px; font-family: monospace; font-size: 12px; color: #a8d8a8; line-height: 1.8; margin-bottom: 18px; white-space: pre; overflow-x: auto; }
-.hint { font-size: 12px; color: var(--text3); margin-top: 8px; line-height: 1.7; }
-.col-info { font-size: 12px; color: var(--text2); line-height: 2; }
 .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; flex-wrap: wrap; gap: 10px; }
 .section-title { font-family: 'Syne',sans-serif; font-size: 20px; font-weight: 700; }
 .member-list-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .member-tag { display: flex; align-items: center; gap: 6px; background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 6px 12px; font-size: 13px; }
 .member-tag-del { background: none; border: none; color: var(--accent2); cursor: pointer; font-size: 14px; padding: 0; line-height: 1; }
 .add-member-row { display: flex; gap: 8px; margin-top: 12px; }
-.member-input { padding: 10px 14px; border-radius: 8px; }
+.sync-badge { font-size: 11px; background: rgba(67,233,123,0.12); color: var(--accent3); border: 1px solid rgba(67,233,123,0.25); padding: 4px 10px; border-radius: 6px; }
+.sync-badge.syncing { background: rgba(108,99,255,0.12); color: var(--accent); border-color: rgba(108,99,255,0.25); }
 @media (max-width: 600px) {
   .header { padding: 12px 16px; }
   .main { padding: 16px; }
@@ -170,12 +147,13 @@ textarea::placeholder, .gas-input::placeholder, .comment-input::placeholder, .na
           <div class="logo-sub">架電振り返りツール</div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
         <div class="tab-bar">
           <button class="tab-btn active" onclick="switchTab('input')">＋ 新規分析</button>
           <button class="tab-btn" onclick="switchTab('list')">📋 振り返り一覧 <span id="count-badge"></span></button>
           <button class="tab-btn" onclick="switchTab('settings')">⚙ 設定</button>
         </div>
+        <span id="sync-badge" class="sync-badge">🔄 同期中...</span>
         <span class="api-badge" onclick="resetApiKey()" title="クリックでAPIキーをリセット">🔑 API接続中</span>
       </div>
     </header>
@@ -186,10 +164,8 @@ textarea::placeholder, .gas-input::placeholder, .comment-input::placeholder, .na
       <div id="tab-input">
         <div class="panel">
           <div class="panel-title">架電担当者を選択</div>
-          <div class="member-select-label">誰の架電ですか？</div>
           <div class="member-grid" id="member-chips"></div>
         </div>
-
         <div class="panel">
           <div class="panel-title">文字起こしを貼り付け</div>
           <textarea id="transcript" placeholder="inside-sales-toolsの文字起こしをここにコピペしてください...
@@ -204,7 +180,6 @@ textarea::placeholder, .gas-input::placeholder, .comment-input::placeholder, .na
             <button class="btn btn-secondary" onclick="clearTranscript()">クリア</button>
           </div>
         </div>
-
         <div class="panel" id="loading-panel" style="display:none;">
           <div class="loading-wrap">
             <div class="spinner"></div>
@@ -212,7 +187,6 @@ textarea::placeholder, .gas-input::placeholder, .comment-input::placeholder, .na
             <div class="progress"><div class="progress-fill"></div></div>
           </div>
         </div>
-
         <div class="panel" id="result-panel" style="display:none;">
           <div class="panel-title">分析結果</div>
           <div id="badges" style="display:flex;gap:8px;margin-bottom:18px;flex-wrap:wrap;"></div>
@@ -226,7 +200,6 @@ textarea::placeholder, .gas-input::placeholder, .comment-input::placeholder, .na
           <textarea id="your-note" style="min-height:80px;" placeholder="自分なりの気づき・改善点をメモしておこう..."></textarea>
           <div class="btn-row">
             <button class="btn btn-success" onclick="saveRecord()">💾 保存してチームと共有</button>
-            <span id="sheets-hint" style="font-size:12px;color:var(--accent3);display:none;">+ Googleスプレッドシートにも書き込み</span>
           </div>
         </div>
       </div>
@@ -235,14 +208,13 @@ textarea::placeholder, .gas-input::placeholder, .comment-input::placeholder, .na
       <div id="tab-list" style="display:none;">
         <div class="section-header">
           <div class="section-title">架電振り返り一覧</div>
+          <button class="btn btn-secondary" style="font-size:12px;padding:8px 14px;" onclick="loadReviews()">🔄 最新を読み込む</button>
         </div>
-        <!-- フィルター -->
         <div class="filter-bar">
           <span class="filter-label">絞り込み：</span>
-          <span class="filter-chip active" onclick="setFilter('all', this)">全員</span>
+          <span class="filter-chip active" onclick="setFilter('all',this)">全員</span>
           <span id="member-filters"></span>
         </div>
-        <!-- コメント欄用の名前 -->
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
           <span style="font-size:12px;color:var(--text2);">コメント投稿者名：</span>
           <input class="name-input" id="author-name" style="width:130px;padding:8px 12px;border-radius:8px;" placeholder="例：田中" oninput="saveName()">
@@ -261,36 +233,9 @@ textarea::placeholder, .gas-input::placeholder, .comment-input::placeholder, .na
             <button class="btn btn-secondary" onclick="addMember()">＋ 追加</button>
           </div>
         </div>
-
         <div class="panel">
-          <div class="panel-title">Googleスプレッドシート連携</div>
-          <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:16px;">GASをスプレッドシートに設定することで、架電記録を自動書き込みできます。</p>
-          <div class="code-block">function doGet(e) {
-  try {
-    var params = e.parameter;
-    if (params && params.row) {
-      var row = JSON.parse(decodeURIComponent(params.row));
-      var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-      sheet.appendRow(row);
-      return ContentService.createTextOutput(JSON.stringify({status:"ok"}))
-        .setMimeType(ContentService.MimeType.JSON);
-    }
-    return ContentService.createTextOutput(JSON.stringify({status:"ok",message:"GAS is running"}))
-      .setMimeType(ContentService.MimeType.JSON);
-  } catch(err) {
-    return ContentService.createTextOutput(JSON.stringify({status:"error",message:err.toString()}))
-      .setMimeType(ContentService.MimeType.JSON);
-  }
-}
-function doPost(e) { return doGet(e); }</div>
-          <div style="font-size:13px;color:var(--text2);margin-bottom:6px;">GAS WebApp URL</div>
-          <input class="gas-input" id="gas-url" placeholder="https://script.google.com/macros/s/..." oninput="saveGasUrl()">
-          <div class="hint">※ URLを入力するだけで連携完了。保存ボタン押下時に自動送信されます。</div>
-          <div class="divider"></div>
-          <div class="panel-title">スプレッドシートの列構成</div>
-          <div class="col-info">A: 日時　B: 担当者　C: 企業名　D: 連絡先　E: 事業内容　F: 通電　G: アポ<br>H: NG理由　I: 実際の切り返し　J: 架電結果　K: AI推奨切り返し　L: 自分のメモ</div>
-          <div class="divider"></div>
           <div class="panel-title">データ管理</div>
+          <p style="font-size:13px;color:var(--text2);margin-bottom:12px;">全データはFirebase（Googleのサーバー）にリアルタイム保存・共有されています。</p>
           <button class="btn btn-danger" onclick="clearAll()">🗑 全データを削除</button>
         </div>
       </div>
@@ -301,48 +246,101 @@ function doPost(e) { return doGet(e); }</div>
 
 <div class="toast" id="toast" style="display:none;"></div>
 
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, set, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+// Firebase設定
+const firebaseConfig = {
+  apiKey: "AIzaSyBjZ52yjPBMB6tQvZjEWMwkMe--9JF_zf0",
+  authDomain: "call-review-15294.firebaseapp.com",
+  databaseURL: "https://call-review-15294-default-rtdb.firebaseio.com",
+  projectId: "call-review-15294",
+  storageBucket: "call-review-15294.firebasestorage.app",
+  messagingSenderId: "492963060412",
+  appId: "1:492963060412:web:672e584afe52223cde8eb9"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// グローバルに公開
+window._firebase = { db, ref, push, onValue, set, remove };
+
+// Firebase接続後に初期化
+window.initApp();
+</script>
+
 <script>
-// ============================================================
-// 初期メンバーリスト
-// ============================================================
 const DEFAULT_MEMBERS = ['亀村','加藤','葉山','野々村','植松','鶴田','中村','名田','滝澤'];
 
 let currentResult = null;
 let reviews = [];
-let comments = {};
-let gasUrl = '';
-let authorName = '';
 let apiKey = '';
 let members = [];
 let selectedMember = '';
 let currentFilter = 'all';
+let authorName = '';
+let firebaseReady = false;
 
 // ============================================================
 // Init
 // ============================================================
-window.addEventListener('DOMContentLoaded', () => {
+window.initApp = function() {
+  firebaseReady = true;
   apiKey = localStorage.getItem('anthropic-api-key') || '';
-  reviews = JSON.parse(localStorage.getItem('call-reviews') || '[]');
-  comments = JSON.parse(localStorage.getItem('call-comments') || '{}');
-  gasUrl = localStorage.getItem('gas-url') || '';
   authorName = localStorage.getItem('author-name') || '';
   members = JSON.parse(localStorage.getItem('call-members') || JSON.stringify(DEFAULT_MEMBERS));
 
   if (apiKey) showApp();
 
   if (document.getElementById('author-name')) document.getElementById('author-name').value = authorName;
-  if (document.getElementById('gas-url')) document.getElementById('gas-url').value = gasUrl;
 
   renderMemberChips();
   renderMemberList();
   renderMemberFilters();
-  updateCountBadge();
-  if (gasUrl) document.getElementById('sheets-hint').style.display = 'inline';
-});
+
+  // Firebaseからリアルタイム読み込み
+  listenReviews();
+}
+
+function listenReviews() {
+  const { db, ref, onValue } = window._firebase;
+  const reviewsRef = ref(db, 'reviews');
+  setSyncBadge(true);
+  onValue(reviewsRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      reviews = Object.entries(data).map(([id, v]) => ({ ...v, firebaseId: id }));
+      reviews.sort((a, b) => b.timestamp - a.timestamp);
+    } else {
+      reviews = [];
+    }
+    updateCountBadge();
+    setSyncBadge(false);
+    // 一覧タブが開いていれば再描画
+    if (document.getElementById('tab-list').style.display !== 'none') {
+      renderReviews();
+    }
+  });
+}
+
+function setSyncBadge(syncing) {
+  const el = document.getElementById('sync-badge');
+  if (!el) return;
+  if (syncing) {
+    el.textContent = '🔄 同期中...';
+    el.className = 'sync-badge syncing';
+  } else {
+    el.textContent = '✅ 同期済み';
+    el.className = 'sync-badge';
+  }
+}
 
 function saveApiKey() {
   const key = document.getElementById('apikey-input').value.trim();
-  if (!key || !key.startsWith('sk-')) { showToast('❌ 正しいAPIキーを入力してください（sk-ant-...）'); return; }
+  if (!key || !key.startsWith('sk-')) { showToast('❌ 正しいAPIキーを入力してください', true); return; }
   apiKey = key;
   localStorage.setItem('anthropic-api-key', key);
   showApp();
@@ -371,34 +369,29 @@ function switchTab(tab) {
     document.querySelectorAll('.tab-btn')[i].classList.toggle('active', t === tab);
   });
   if (tab === 'list') renderReviews();
-  if (tab === 'settings') { renderMemberList(); renderMemberFilters(); }
+  if (tab === 'settings') { renderMemberList(); }
 }
+window.switchTab = switchTab;
 
 // ============================================================
-// メンバーチップ（新規分析画面）
+// メンバー
 // ============================================================
 function renderMemberChips() {
   const wrap = document.getElementById('member-chips');
   if (!wrap) return;
-  wrap.innerHTML = members.map(m => `
-    <button class="member-chip ${selectedMember === m ? 'selected' : ''}" onclick="selectMember('${m}')">${m}</button>
-  `).join('');
+  wrap.innerHTML = members.map(m => `<button class="member-chip ${selectedMember===m?'selected':''}" onclick="selectMember('${m}')">${m}</button>`).join('');
 }
 
 function selectMember(name) {
   selectedMember = selectedMember === name ? '' : name;
   renderMemberChips();
 }
+window.selectMember = selectMember;
 
-// ============================================================
-// メンバーフィルター（一覧画面）
-// ============================================================
 function renderMemberFilters() {
   const wrap = document.getElementById('member-filters');
   if (!wrap) return;
-  wrap.innerHTML = members.map(m => `
-    <span class="filter-chip ${currentFilter === m ? 'active' : ''}" onclick="setFilter('${m}', this)">${m}</span>
-  `).join('');
+  wrap.innerHTML = members.map(m => `<span class="filter-chip ${currentFilter===m?'active':''}" onclick="setFilter('${m}',this)">${m}</span>`).join('');
 }
 
 function setFilter(name, el) {
@@ -407,51 +400,41 @@ function setFilter(name, el) {
   el.classList.add('active');
   renderReviews();
 }
+window.setFilter = setFilter;
 
-// ============================================================
-// メンバー管理（設定画面）
-// ============================================================
 function renderMemberList() {
   const wrap = document.getElementById('member-list');
   if (!wrap) return;
-  wrap.innerHTML = members.map((m, i) => `
-    <div class="member-tag">
-      <span>${m}</span>
-      <button class="member-tag-del" onclick="deleteMember(${i})">×</button>
-    </div>
-  `).join('');
+  wrap.innerHTML = members.map((m,i) => `<div class="member-tag"><span>${m}</span><button class="member-tag-del" onclick="deleteMember(${i})">×</button></div>`).join('');
 }
 
 function addMember() {
   const input = document.getElementById('new-member-input');
   const name = input.value.trim();
-  if (!name || members.includes(name)) { showToast('❌ 未入力または重複しています'); return; }
+  if (!name || members.includes(name)) { showToast('❌ 未入力または重複しています', true); return; }
   members.push(name);
   localStorage.setItem('call-members', JSON.stringify(members));
   input.value = '';
-  renderMemberList();
-  renderMemberChips();
-  renderMemberFilters();
+  renderMemberList(); renderMemberChips(); renderMemberFilters();
   showToast('✅ メンバーを追加しました');
 }
+window.addMember = addMember;
 
 function deleteMember(index) {
   if (!confirm(`「${members[index]}」を削除しますか？`)) return;
   members.splice(index, 1);
   localStorage.setItem('call-members', JSON.stringify(members));
-  if (selectedMember === members[index]) selectedMember = '';
-  renderMemberList();
-  renderMemberChips();
-  renderMemberFilters();
+  renderMemberList(); renderMemberChips(); renderMemberFilters();
 }
+window.deleteMember = deleteMember;
 
 // ============================================================
-// AI 分析
+// AI分析
 // ============================================================
 async function analyze() {
   const transcript = document.getElementById('transcript').value.trim();
-  if (!transcript) { showToast('❌ 文字起こしを入力してください'); return; }
-  if (!selectedMember) { showToast('❌ 担当者を選択してください'); return; }
+  if (!transcript) { showToast('❌ 文字起こしを入力してください', true); return; }
+  if (!selectedMember) { showToast('❌ 担当者を選択してください', true); return; }
 
   document.getElementById('analyze-btn').disabled = true;
   document.getElementById('loading-panel').style.display = 'block';
@@ -499,91 +482,81 @@ ${transcript}
     currentResult = JSON.parse(clean);
     renderResult(currentResult);
   } catch(e) {
-    showToast('❌ 分析エラー: ' + e.message);
+    showToast('❌ 分析エラー: ' + e.message, true);
   }
 
   document.getElementById('loading-panel').style.display = 'none';
   document.getElementById('analyze-btn').disabled = false;
 }
+window.analyze = analyze;
 
 function renderResult(r) {
   document.getElementById('badges').innerHTML = `
     <span class="badge badge-purple">👤 ${escHtml(selectedMember)}</span>
-    <span class="badge ${r.connected ? 'badge-green' : 'badge-gray'}">${r.connected ? '✓ 通電あり' : '✕ 通電なし'}</span>
-    <span class="badge ${r.appointment ? 'badge-green' : 'badge-red'}">${r.appointment ? '🎯 アポ取得' : '✕ アポなし'}</span>
+    <span class="badge ${r.connected?'badge-green':'badge-gray'}">${r.connected?'✓ 通電あり':'✕ 通電なし'}</span>
+    <span class="badge ${r.appointment?'badge-green':'badge-red'}">${r.appointment?'🎯 アポ取得':'✕ アポなし'}</span>
   `;
   document.getElementById('result-grid').innerHTML = `
     <div class="result-field"><div class="result-label">企業名</div><div class="result-value" style="font-size:16px;font-weight:600;">${escHtml(r.company)}</div></div>
-    <div class="result-field"><div class="result-label">担当者名</div><div class="result-value">${escHtml(r.contact)}</div></div>
+    <div class="result-field"><div class="result-label">担当者名（相手）</div><div class="result-value">${escHtml(r.contact)}</div></div>
     <div class="result-field full"><div class="result-label">事業内容</div><div class="result-value">${escHtml(r.business)}</div></div>
     <div class="result-field"><div class="result-label">NG理由</div><div class="result-value ng-text">${escHtml(r.ng_reason)}</div></div>
-    <div class="result-field"><div class="result-label">実際の切り返し</div><div class="result-value">${escHtml(r.rebuttal || '（記録なし）')}</div></div>
+    <div class="result-field"><div class="result-label">実際の切り返し</div><div class="result-value">${escHtml(r.rebuttal||'（記録なし）')}</div></div>
     <div class="result-field full"><div class="result-label">架電結果</div><div class="result-value">${escHtml(r.result)}</div></div>
   `;
   document.getElementById('better-rebuttal').textContent = r.better_rebuttal;
   document.getElementById('result-panel').style.display = 'block';
-  if (gasUrl) document.getElementById('sheets-hint').style.display = 'inline';
 }
 
 // ============================================================
-// 保存
+// 保存（Firebase）
 // ============================================================
 async function saveRecord() {
   if (!currentResult) return;
+  const { db, ref, push } = window._firebase;
   const record = {
     ...currentResult,
     member: selectedMember,
     your_note: document.getElementById('your-note').value,
-    id: Date.now(),
-    date: new Date().toLocaleString('ja-JP')
+    timestamp: Date.now(),
+    date: new Date().toLocaleString('ja-JP'),
+    comments: {}
   };
-  reviews.unshift(record);
-  localStorage.setItem('call-reviews', JSON.stringify(reviews));
-  updateCountBadge();
 
-  if (gasUrl) {
-    try {
-      await sendToSheets(record);
-      showToast('✅ 保存 & スプシ送信完了！');
-    } catch {
-      showToast('✅ 保存完了（スプシ送信失敗）');
-    }
-  } else {
-    showToast('✅ 保存しました');
+  try {
+    await push(ref(db, 'reviews'), record);
+    showToast('✅ 保存してチームと共有しました！');
+    document.getElementById('transcript').value = '';
+    document.getElementById('your-note').value = '';
+    document.getElementById('result-panel').style.display = 'none';
+    currentResult = null;
+    switchTab('list');
+  } catch(e) {
+    showToast('❌ 保存エラー: ' + e.message, true);
   }
-
-  document.getElementById('transcript').value = '';
-  document.getElementById('your-note').value = '';
-  document.getElementById('result-panel').style.display = 'none';
-  currentResult = null;
-  switchTab('list');
 }
-
-async function sendToSheets(record) {
-  const row = [
-    record.date, record.member, record.company, record.contact, record.business,
-    record.connected ? '○' : '×', record.appointment ? '○' : '×',
-    record.ng_reason, record.rebuttal, record.result,
-    record.better_rebuttal, record.your_note || ''
-  ];
-  const url = gasUrl + '?row=' + encodeURIComponent(JSON.stringify(row));
-  await fetch(url);
-}
+window.saveRecord = saveRecord;
 
 // ============================================================
-// レビュー一覧
+// 振り返り一覧
 // ============================================================
+function loadReviews() {
+  setSyncBadge(true);
+  setTimeout(() => { setSyncBadge(false); renderReviews(); }, 500);
+}
+window.loadReviews = loadReviews;
+
 function renderReviews() {
   const container = document.getElementById('reviews-container');
   const filtered = currentFilter === 'all' ? reviews : reviews.filter(r => r.member === currentFilter);
 
   if (filtered.length === 0) {
-    container.innerHTML = `<div class="empty"><div class="empty-icon">📞</div><div class="empty-text">${currentFilter === 'all' ? 'まだ架電記録がありません。<br>「新規分析」タブから文字起こしを貼り付けてください。' : `${currentFilter}さんの架電記録はまだありません。`}</div></div>`;
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📞</div><div class="empty-text">${currentFilter==='all'?'まだ架電記録がありません。<br>「新規分析」タブから分析してください。':`${currentFilter}さんの架電記録はまだありません。`}</div></div>`;
     return;
   }
 
   container.innerHTML = filtered.map(r => {
-    const cmts = comments[r.id] || [];
+    const cmts = r.comments ? Object.values(r.comments) : [];
     const cmtHtml = cmts.map(c => `
       <div class="comment-item">
         <div class="comment-author">${escHtml(c.author)} · ${c.time}</div>
@@ -597,79 +570,107 @@ function renderReviews() {
           <div class="review-meta">${r.date}</div>
         </div>
         <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <span class="badge badge-purple">👤 ${escHtml(r.member || '不明')}</span>
-          <span class="badge ${r.connected ? 'badge-green' : 'badge-gray'}">${r.connected ? '通電○' : '通電×'}</span>
-          <span class="badge ${r.appointment ? 'badge-green' : 'badge-red'}">${r.appointment ? 'アポ○' : 'アポ×'}</span>
+          <span class="badge badge-purple">👤 ${escHtml(r.member||'不明')}</span>
+          <span class="badge ${r.connected?'badge-green':'badge-gray'}">${r.connected?'通電○':'通電×'}</span>
+          <span class="badge ${r.appointment?'badge-green':'badge-red'}">${r.appointment?'アポ○':'アポ×'}</span>
         </div>
       </div>
       <div class="review-body">
         <div><div class="mini-label">担当者（相手）</div><div class="mini-value">${escHtml(r.contact)}</div></div>
         <div><div class="mini-label">事業内容</div><div class="mini-value">${escHtml(r.business)}</div></div>
         <div><div class="mini-label">NG理由</div><div class="mini-value ng-text">${escHtml(r.ng_reason)}</div></div>
-        <div><div class="mini-label">実際の切り返し</div><div class="mini-value">${escHtml(r.rebuttal || '—')}</div></div>
+        <div><div class="mini-label">実際の切り返し</div><div class="mini-value">${escHtml(r.rebuttal||'—')}</div></div>
         <div><div class="mini-label">架電結果</div><div class="mini-value">${escHtml(r.result)}</div></div>
       </div>
       <div class="ai-box">
         <div class="ai-box-title">✨ AI推奨切り返し</div>
         <div class="ai-box-text" style="font-size:13px;">${escHtml(r.better_rebuttal)}</div>
       </div>
-      ${r.your_note ? `<div class="note-box"><div class="note-label">自分のメモ</div>${escHtml(r.your_note)}</div>` : ''}
+      ${r.your_note?`<div class="note-box"><div class="note-label">自分のメモ</div>${escHtml(r.your_note)}</div>`:''}
       <div class="comments-section">
         <div class="comments-title">💬 チームコメント (${cmts.length})</div>
         ${cmtHtml}
         <div class="comment-row">
-          <input class="comment-input" id="ci-${r.id}" placeholder="意見・アドバイスを追加..." onkeydown="if(event.key==='Enter')addComment(${r.id})">
-          <button class="btn-sm" onclick="addComment(${r.id})">送信</button>
+          <input class="comment-input" id="ci-${r.firebaseId}" placeholder="意見・アドバイスを追加..." onkeydown="if(event.key==='Enter')addComment('${r.firebaseId}')">
+          <button class="btn-sm" onclick="addComment('${r.firebaseId}')">送信</button>
         </div>
       </div>
     </div>`;
   }).join('');
 }
 
-function addComment(reviewId) {
+// ============================================================
+// コメント追加（Firebase）
+// ============================================================
+async function addComment(reviewId) {
   const input = document.getElementById('ci-' + reviewId);
   const text = input.value.trim();
   const author = authorName || '匿名';
   if (!text) return;
-  if (!comments[reviewId]) comments[reviewId] = [];
-  comments[reviewId].push({ author, text, time: new Date().toLocaleString('ja-JP') });
-  localStorage.setItem('call-comments', JSON.stringify(comments));
-  input.value = '';
-  renderReviews();
-}
 
+  const { db, ref, push } = window._firebase;
+  try {
+    await push(ref(db, `reviews/${reviewId}/comments`), {
+      author, text, time: new Date().toLocaleString('ja-JP')
+    });
+    input.value = '';
+  } catch(e) {
+    showToast('❌ コメント送信失敗', true);
+  }
+}
+window.addComment = addComment;
+
+// ============================================================
+// Utils
+// ============================================================
 function clearTranscript() {
   document.getElementById('transcript').value = '';
   document.getElementById('result-panel').style.display = 'none';
   currentResult = null;
 }
-function saveGasUrl() {
-  gasUrl = document.getElementById('gas-url').value;
-  localStorage.setItem('gas-url', gasUrl);
-  if (gasUrl) document.getElementById('sheets-hint').style.display = 'inline';
-}
+window.clearTranscript = clearTranscript;
+
 function saveName() {
   authorName = document.getElementById('author-name').value;
   localStorage.setItem('author-name', authorName);
 }
+window.saveName = saveName;
+
 function updateCountBadge() {
   const el = document.getElementById('count-badge');
   if (el) el.textContent = reviews.length > 0 ? `(${reviews.length})` : '';
 }
-function clearAll() {
-  if (!confirm('全データを削除しますか？')) return;
-  reviews = []; comments = {};
-  localStorage.removeItem('call-reviews');
-  localStorage.removeItem('call-comments');
-  updateCountBadge();
-  showToast('🗑 データを削除しました');
+
+async function clearAll() {
+  if (!confirm('全データを削除しますか？この操作は取り消せません。')) return;
+  const { db, ref, set } = window._firebase;
+  try {
+    await set(ref(db, 'reviews'), null);
+    showToast('🗑 全データを削除しました');
+  } catch(e) {
+    showToast('❌ 削除エラー', true);
+  }
 }
-function showToast(msg) {
+window.clearAll = clearAll;
+
+function resetApiKey() {
+  if (!confirm('APIキーをリセットしますか？')) return;
+  localStorage.removeItem('anthropic-api-key');
+  apiKey = '';
+  document.getElementById('main-app').style.display = 'none';
+  document.getElementById('apikey-screen').style.display = 'flex';
+  document.getElementById('apikey-input').value = '';
+}
+window.resetApiKey = resetApiKey;
+
+function showToast(msg, isError) {
   const el = document.getElementById('toast');
   el.textContent = msg;
+  el.className = 'toast' + (isError ? ' toast-error' : '');
   el.style.display = 'block';
   setTimeout(() => { el.style.display = 'none'; }, 3000);
 }
+
 function escHtml(str) {
   if (!str) return '';
   return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
